@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using BrainstormV2Backend.Models;
 using BrainstormV2Backend.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BrainstormV2Backend.Controllers;
 
+[Authorize]
 [ApiController]
 public class TemplateController : ControllerBase
 {
