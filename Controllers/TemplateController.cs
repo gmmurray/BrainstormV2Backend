@@ -1,14 +1,13 @@
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using BrainstormV2Backend.Models;
 using BrainstormV2Backend.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BrainstormV2Backend.Controllers;
 
 [Authorize]
 [ApiController]
-public class TemplateController : ControllerBase
+public class TemplateController : AuthenticatedController
 {
   private readonly ILogger<TemplateController> _logger;
   private readonly ITemplateService _templateService;
@@ -19,16 +18,38 @@ public class TemplateController : ControllerBase
     _templateService = templateService;
   }
 
-  [HttpGet("template")]
-  public Template GetTemplate()
+  [HttpGet("templates/{templateId}")]
+  public async Task<IActionResult> GetTemplate(string templateId)
   {
-    return _templateService.GetTemplate();
+    var result = await _templateService.GetTemplate(templateId, await GetTokenSub());
+
+    if (result == null)
+    {
+      _logger.LogError("Error creating template");
+      return NotFound();
+    }
+
+    return Ok(result);
   }
 
   [HttpGet("templates")]
-  public IEnumerable<Template> GetTemplates(object request)
+  public async Task<IActionResult> GetTemplates([FromQuery] TemplateFilter filter)
   {
-    Console.WriteLine(request);
-    return _templateService.GetTemplates();
+    var result = await _templateService.GetTemplates(filter, await GetTokenSub());
+
+    return Ok(result);
+  }
+
+  [HttpPost("template")]
+  public async Task<IActionResult> CreateTemplate(Template template)
+  {
+    var result = await _templateService.CreateTemplate(template, await GetTokenSub());
+
+    if (result == null)
+    {
+      throw new Exception("Error creating template");
+    }
+
+    return Ok(result);
   }
 }

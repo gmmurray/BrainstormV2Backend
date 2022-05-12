@@ -1,27 +1,49 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BrainstormV2Backend.Services.Contracts;
 using BrainstormV2Backend.Models;
+using BrainstormV2Backend.Services.Contracts;
+using MongoDB.Driver;
 
 namespace BrainstormV2Backend.Services
 {
   public class TemplateService : ITemplateService
   {
-    public IEnumerable<Template> GetTemplates()
+    private readonly IMongoCollection<Template> _templateCollection;
+
+    public TemplateService(IMongoClient mongoClient, IConfiguration configuration)
     {
-      return Enumerable.Empty<Template>();
+      _templateCollection = mongoClient
+        .GetDatabase(configuration["MongoDB:DatabaseName"])
+        .GetCollection<Template>("Templates");
     }
 
-    public Template GetTemplate()
+    public async Task<IEnumerable<Template>> GetTemplates(TemplateFilter filter, string userId)
     {
-      return null;
+      var query = _templateCollection.Find(x => x.UserId == userId);
+
+      if (filter.Limit is not null)
+      {
+        query = query.Limit(filter.Limit);
+      }
+
+      return await query.ToListAsync();
     }
 
-    public Template CreateTemplate()
+    public async Task<Template> GetTemplate(string templateId, string userId)
     {
-      return null;
+      return await _templateCollection.Find(x => x.Id == templateId && x.UserId == userId).SingleOrDefaultAsync();
+    }
+
+    public async Task<Template> CreateTemplate(Template template, string userId)
+    {
+      var creation = new Template
+      {
+        UserId = userId,
+        Name = template.Name,
+        Fields = template.Fields
+      };
+
+      await _templateCollection.InsertOneAsync(creation);
+
+      return creation;
     }
 
     public void UpdateTemplate()
