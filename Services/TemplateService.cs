@@ -46,14 +46,14 @@ namespace BrainstormV2Backend.Services
       return creation;
     }
 
-    public void UpdateTemplate()
+    public async Task UpdateTemplate(Template updates, string userId)
     {
-      return;
+      await _templateCollection.ReplaceOneAsync(x => x.Id == updates.Id && x.UserId == userId, updates);
     }
 
-    public void DeleteTemplate()
+    public async Task DeleteTemplate(string templateId, string userId)
     {
-      return;
+      await _templateCollection.DeleteOneAsync(x => x.Id == templateId && x.UserId == userId);
     }
   }
 }

@@ -7,7 +7,7 @@ namespace BrainstormV2Backend.Services.Contracts
     Task<IEnumerable<Template>> GetTemplates(TemplateFilter filter, string userId);
     Task<Template> GetTemplate(string templateId, string userId);
     Task<Template> CreateTemplate(Template template, string userId);
-    void UpdateTemplate();
-    void DeleteTemplate();
+    Task UpdateTemplate(Template updates, string userId);
+    Task DeleteTemplate(string templateId, string userId);
   }
 }
