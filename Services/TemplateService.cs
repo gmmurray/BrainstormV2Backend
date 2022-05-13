@@ -17,7 +17,16 @@ namespace BrainstormV2Backend.Services
 
     public async Task<IEnumerable<Template>> GetTemplates(TemplateFilter filter, string userId)
     {
-      var query = _templateCollection.Find(x => x.UserId == userId);
+      var filterBuilder = Builders<Template>.Filter;
+
+      var filterDefinition = filterBuilder.Eq("UserId", userId);
+
+      if (filter.Ids is not null && filter.Ids.Any())
+      {
+        filterDefinition &= filterBuilder.In("Id", filter.Ids);
+      }
+
+      var query = _templateCollection.Find(filterDefinition);
 
       if (filter.Limit is not null)
       {

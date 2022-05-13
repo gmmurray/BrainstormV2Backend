@@ -1,7 +1,5 @@
-using System;
 using BrainstormV2Backend.Services;
 using BrainstormV2Backend.Services.Contracts;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MongoDB.Driver;
 
@@ -11,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
+builder.Services.AddScoped<IIdeaService, IdeaService>();
 
 var mongoConnectionString = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
   ? builder.Configuration["MONGODB_CONNECTION_STRING"]

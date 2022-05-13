@@ -10,12 +10,10 @@ namespace BrainstormV2Backend.Controllers;
 [Route("/api/[controller]")]
 public class TemplatesController : AuthenticatedController
 {
-  private readonly ILogger<TemplatesController> _logger;
   private readonly ITemplateService _templateService;
 
-  public TemplatesController(ILogger<TemplatesController> logger, ITemplateService templateService)
+  public TemplatesController(ITemplateService templateService)
   {
-    _logger = logger;
     _templateService = templateService;
   }
 
@@ -26,7 +24,6 @@ public class TemplatesController : AuthenticatedController
 
     if (template is null)
     {
-      _logger.LogError("Error creating template");
       return NotFound();
     }
 
