@@ -28,6 +28,13 @@ builder.Services.AddAuthentication(options =>
   options.Audience = builder.Configuration["Auth0:Audience"];
 });
 
+builder.Services.AddCors(options =>
+  options.AddPolicy(name: "_allowCors",
+    policy => _ = policy
+      .WithOrigins(builder.Configuration["Client:Origin"])
+      .AllowAnyHeader()
+      .AllowAnyMethod()));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +44,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("_allowCors");
 
 app.UseAuthentication();
 app.UseAuthorization();
