@@ -28,10 +28,14 @@ builder.Services.AddAuthentication(options =>
   options.Audience = builder.Configuration["Auth0:Audience"];
 });
 
+var corsOrigin = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+  ? builder.Configuration["Client:Origin"]
+  : Environment.GetEnvironmentVariable("CLIENT_ORIGIN");
+
 builder.Services.AddCors(options =>
   options.AddPolicy(name: "_allowCors",
     policy => _ = policy
-      .WithOrigins(builder.Configuration["Client:Origin"])
+      .WithOrigins(corsOrigin!)
       .AllowAnyHeader()
       .AllowAnyMethod()));
 
