@@ -60,7 +60,15 @@ namespace BrainstormV2Backend.Services
       {
         if (idea.TemplateId is not null)
         {
-          idea.Template = templateDict[idea.TemplateId];
+          if (templateDict.ContainsKey(idea.TemplateId))
+          {
+            idea.Template = templateDict[idea.TemplateId];
+          }
+          else
+          {
+            idea.Template = null;
+            idea.TemplateId = null;
+          }
         }
       }
 
